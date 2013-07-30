@@ -1,0 +1,202 @@
+Pending Version 2.2.2
+
+Fix for unknown [] for NilClass when database not setup (epinault-ttc)
+
+
+2011-04-11 version 2.2.1
+
+Content type header on redirects (Marc Schwieterman)
+
+
+2011-02-02 version 2.2.0
+
+Don't require client_secret when requesting authorization (George Ogata).
+
+Don't check the redirect_uri if the client does not have one set (George Ogata).
+
+Look for post params if request is a POST (George Ogata).
+
+
+2010-12-22 version 2.1.0
+
+Added support for two-legged OAuth flow (Brian Ploetz)
+
+Fixed query parameter authorization and allowed access_token to be defined
+(Ari)
+
+
+2010-11-30 version 2.0.1
+
+Change: username/password authentication with no scope results in access token
+with default scope. Makes like easier for everyone.
+
+
+2010-11-23 version 2.0.0
+
+MAJOR CHANGE:
+Keeping with OAuth 2.0 spec terminology, we'll call it scope all around. Some
+places in the API that previously used "scopes" have been changed to "scope".
+
+OTOH, the scope is not consistently stored and returned as array of names,
+previous was stored as comma-separated string, and often returned as such.
+Whatever you have stored with pre 2.0 will probably not work with 2.0 and
+forward.
+
+Clients now store their scope, and only those names are allowed in access
+tokens. The global setting oauth.scope is no longer in use. Forget about it.
+
+To migrate from 1.4.x to 2.0:
+
+  oauth2-server migrate --db <db name>
+
+Application client registrations will change from having no scope to having an
+empty scope, so you would want to update their registration, either using the
+Web console, or from your code:
+
+  Client.all.each { |client| client.update(:scope=>%w{read write}) }
+
+
+Use Rack::OAuth2::Server token_for and access_grant to generate access tokens
+and access grants, respectively. These are mighty useful if you're using the
+OAuth 2.0 infrastructure, but have different ways for authorizing, e.g. using
+access tokens instead of cookies.
+
+Rack::OAuth2::Server method register to register new client applications and
+update existing records. This method is idempotent, so you can use it in rake
+db:seed, deploy scripts, migrations, etc.
+
+If your authenticator accepts four arguments, it will receive, in addition to
+username and password, also the client identifier and requested scopes.
+
+Web console now allows you to set/unset individual scopes for each client
+application, and store a note on each client.
+
+Added Sammy.js OAuth 2.0 plugin.
+
+
+2010-11-12 version 1.4.6
+
+Added Railtie support for Rails 3.x and now running tests against both Rails
+2.x and 3.x.
+
+
+2010-11-11 version 1.4.5
+
+Cosmetic changes to UI. Added throbber and error messages when AJAX requests go
+foul. Header on the left, sign-out on the right, as most people expect it.
+Client name is no longer a link to the site, site link shown separately.
+
+
+2010-11-10 version 1.4.4
+
+Added a practice server. You can use it to test your OAuth 2.0 client library.
+To fire up the practice server: oauth2-server practice
+
+Bumped up dependencies on Rack 1.1 or later, Sinatra 1.1 or later.
+
+
+2010-11-09 version 1.4.3
+
+Renamed Rack::OAuth2::Server::Admin to just Rack::OAuth2::Admin.
+
+Checked in config.ru, I use this for testing the Web console.
+
+
+2010-11-09 version 1.4.2
+
+Fix to commend line tool to properly do authentication.
+
+Added Sinatra as dependency.
+
+
+2010-11-09 version 1.4.1
+
+Fix to command line tool when accessing MongoDB with username/password.
+
+
+2010-11-09 version 1.4.0
+
+If authorization handle is passed as request parameter (the recommended way),
+then you can call oauth.grant! with a single argument and oauth.deny! with no
+arguments.
+
+You can now call oauth.deny! at any point during the authorization flow, e.g.
+automatically deny all requests based on scope and client.
+
+To deny access, return status code 403 (was, incorrectly 401). Or just use
+oauth.deny!.
+
+Web console gets template_url setting you can use to map access token identity
+into a URL in your application. The substitution variable is "{id}".
+
+Added error page when authorization attempt fails (instead of endless
+redirect).
+
+Fixed mounting of Web console on Rails. If it failed you before, try again.
+
+Fixed documentation for configuration under Rails, clarify that all the
+interesting stuff happens in after_initialize.
+
+Fixed error responses for response_type=token to use fragment identifier.
+
+
+2010-11-08 version 1.3.1
+
+Added command line tool, helps you get started and setup:
+  $ oauth2-server setup --db my_db
+
+Added a touch of color to the UI and ability to delete a client.
+
+You can not sign out of the Web console.
+
+
+2010-11-07 version 1.3.0
+
+Added OAuth authorization console.
+
+Added param_authentication option: turn this on if you need to support
+oauth_token query parameter or form field. Disabled by default.
+
+Added host option: only check requests sent to that host (e.g. only check
+requests to api.example.com).
+
+Added path option: only check requests under this path (e.g. only check
+requests for /api/...).
+
+
+2010-11-03 version 1.2.2
+
+Store ObjectId references in database.
+
+
+2010-11-03 version 1.2.1
+
+Make sure order of scope no longer important for access token lookup.
+
+
+2010-11-02 version 1.2.0
+
+You can now redirect to /oauth/authorize with authorization query parameter and
+it will do the right thing.
+
+
+2010-11-02 version 1.1.1
+
+Fixed missing rails/init.rb.
+
+
+2010-11-02 version 1.1.0
+
+Renamed oauth.resource as oauth.identity to remove confusion, besides, it's
+more often identity than anything else.
+
+Added automagic loading under Rails, no need to require special path.
+
+Added Rack::OAuth2::Server::Options class, easier to user than Hash.
+
+Added indexes for speedier queries.
+
+
+2010-11-02 version 1.0.0
+
+World premiere.
