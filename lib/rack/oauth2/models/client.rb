@@ -17,7 +17,7 @@ module Rack
         validates_uniqueness_of :code
         validates_uniqueness_of :secret
 
-        before_create :assign_code_and_secret
+        before_validation :assign_code_and_secret, on: :create
 
         # Create a new client. Client provides the following properties:
         # # :display_name -- Name to show (e.g. UberClient)
